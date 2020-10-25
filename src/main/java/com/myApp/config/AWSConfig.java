@@ -19,12 +19,12 @@ public class AWSConfig {
     private String secretKey;
     private String bucketName;
 
-    @PostConstruct
-    private void initializeAWSS3() {
-        AWSCredentials awsCredentials = new BasicAWSCredentials(this.accessKey, this.secretKey);
-        amazonS3Client = new AmazonS3Client(awsCredentials);
-        System.out.println("Connected with Amazon S3");
-    }
+//    @PostConstruct
+//    private void initializeAWSS3() {
+//        AWSCredentials awsCredentials = new BasicAWSCredentials(this.accessKey, this.secretKey);
+//        amazonS3Client = new AmazonS3Client(awsCredentials);
+//        System.out.println("Connected with Amazon S3");
+//    }
 
     public AmazonS3Client getAmazonS3Client() {
         return amazonS3Client;

@@ -1,56 +1,68 @@
 package com.myApp.controller;
 
 import com.myApp.domain.Post;
-import com.myApp.repository.PostRepository;
+import com.myApp.domain.Response;
+import com.myApp.exception.ActionDeniedException;
+import com.myApp.exception.PostNotFoundException;
 import com.myApp.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-import java.sql.Timestamp;
-import java.util.List;
+import javax.validation.Valid;
+import java.net.URI;
+import java.security.Principal;
 
 @RestController
 public class PostController {
     @Autowired
-    PostRepository postRepository;
-    @Autowired
     PostService postService;
 
-//     to be modified to include sorting and follower
-    @GetMapping("/posts")
-    List<Post> getAllPosts() {
-        return postRepository.findAll();
-    }
-
-    @GetMapping("/post")
-    List<Post> getPostByUserName(@RequestParam String postedBy) {
-        return postRepository.findByPostedBy(postedBy);
+    @GetMapping("/post/{userName}")
+    ResponseEntity<?> getPostByUserName(@PathVariable String userName) {
+        return ResponseEntity.ok(postService.getPostsByUsername(userName));
     }
 
     @GetMapping("/post/{postId}")
-    Post getPostById(@PathVariable String postId) {
-        return postRepository.findById(postId)
-                .orElse(null);
+    ResponseEntity<?> getPostById(@PathVariable String postId) {
+        try {
+            return ResponseEntity.ok(postService.getPostByPostId(postId));
+        } catch (PostNotFoundException e) {
+            return new ResponseEntity<Response>(
+                    new Response(false, e.getMessage()), HttpStatus.NOT_FOUND);
+        }
     }
 
     @PostMapping("/posts")
-    Post createNewPost(@RequestBody Post newPost) {
-        newPost.setNumberOfLikes(0);
-        newPost.setPostedTimestamp(new Timestamp(System.currentTimeMillis()).toString());
-        return postRepository.save(newPost);
-    }
-
-    @PostMapping("/upload")
-    String uploadFile(@RequestParam MultipartFile file) throws IOException {
-        postService.uploadFile(file);
-        return "Success";
+    ResponseEntity<?> createNewPost(@Valid @RequestBody Post newPost,
+                                    @RequestParam MultipartFile file) {
+        Post post = new Post();
+        try {
+            post = postService.createNewPost(newPost, file);
+        } catch (Exception  e) {
+            return new ResponseEntity<Response>(
+                    new Response(false, e.getMessage()), HttpStatus.BAD_REQUEST);
+        }
+        return ResponseEntity
+                .created(URI.create(String.format("/posts/%s", post.getPostId())))
+                .build();
     }
 
     @DeleteMapping("/posts/{postId}")
-    boolean deletePostByPostId(@PathVariable String postId) {
-        postRepository.deleteById(postId);
-        return true;
+    ResponseEntity<?> deletePostByPostId(@PathVariable String postId,
+                                         @AuthenticationPrincipal Principal principal) {
+        try {
+            postService.deletePostByPostId(postId, principal.getName());
+            return (ResponseEntity<?>) ResponseEntity.noContent();
+        } catch (PostNotFoundException e) {
+            return new ResponseEntity<Response>(
+                    new Response(false, e.getMessage()), HttpStatus.NOT_FOUND);
+        } catch (ActionDeniedException e) {
+            return new ResponseEntity<Response>(
+                    new Response(false, e.getMessage()), HttpStatus.FORBIDDEN);
+        }
     }
 }
