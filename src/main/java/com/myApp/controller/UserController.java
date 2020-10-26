@@ -1,14 +1,18 @@
 package com.myApp.controller;
 
-import com.myApp.domain.HighLevelUserView;
-import com.myApp.domain.Response;
-import com.myApp.domain.SignupRequest;
-import com.myApp.domain.User;
+import com.myApp.config.JwtUtil;
+import com.myApp.domain.*;
 import com.myApp.exception.UserRelatedException;
+import com.myApp.service.CustomUserDetailsService;
 import com.myApp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -19,6 +23,28 @@ import java.util.List;
 public class UserController {
     @Autowired
     UserService userService;
+    @Autowired
+    AuthenticationManager authenticationManager;
+    @Autowired
+    CustomUserDetailsService userDetailsService;
+    @Autowired
+    JwtUtil jwtUtil;
+
+    @PostMapping("/authenticate")
+    public ResponseEntity<?> createAuthToken(@Valid @RequestBody AuthRequest authRequest) throws Exception {
+        try {
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            authRequest.getUsername(), authRequest.getPassword()));
+        } catch (BadCredentialsException e) {
+            throw new Exception("", e);
+        }
+
+        UserDetails userDetails = userDetailsService.loadUserByUsername(authRequest.getUsername());
+        final String jwtToken = jwtUtil.generateToken(userDetails);
+
+        return ResponseEntity.ok(new AuthResponse(jwtToken));
+    }
 
     @PostMapping("/signup")
     @ExceptionHandler(Exception.class)

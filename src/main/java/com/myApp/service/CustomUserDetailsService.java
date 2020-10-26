@@ -27,7 +27,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     List<User> getUsers() {
         User user1 = new User(UUID.randomUUID().toString(), "Sowmiya",
                 "SOwemiya", "",
-                "sowmiya@mail.com", passwordEncoder.getPasswordEncoder().encode("password"),
+                "sowmiya@mail.com", /*passwordEncoder.getPasswordEncoder().encode("password")*/"password",
                 new Timestamp(new Date().getTime()),
                 new Timestamp(new Date().getTime()),
                 true, "USER,ADMIN");
