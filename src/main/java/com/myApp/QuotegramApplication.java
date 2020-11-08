@@ -8,22 +8,21 @@ import org.springframework.boot.autoconfigure.data.mongo.MongoDataAutoConfigurat
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
 import org.springframework.data.mongodb.config.EnableMongoAuditing;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
 
 @SpringBootApplication
-//@EnableMongoAuditing
+@EnableMongoAuditing
+@EnableScheduling
 //@EnableAutoConfiguration(exclude = {
 //        DataSourceAutoConfiguration.class,
 //        MongoAutoConfiguration.class,
 //        MongoDataAutoConfiguration.class
 //})
-public class QuotegramApplication implements CommandLineRunner {
+public class QuotegramApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(QuotegramApplication.class, args);
     }
 
-    @Override
-    public void run(String... args) {
-        System.out.println("Welcome to Quotegram Application");
-    }
 }

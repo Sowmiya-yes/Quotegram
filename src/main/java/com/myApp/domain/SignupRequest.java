@@ -2,10 +2,7 @@ package com.myApp.domain;
 
 import lombok.Data;
 
-import javax.validation.constraints.Email;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.*;
 
 @Data
 public class SignupRequest {
@@ -15,15 +12,13 @@ public class SignupRequest {
     private String lastName;
 
     @NotBlank
-    @Max(20)
-    @Min(5)
+    @Size(min = 5, max = 20)
     private String userName;
 
     @Email
     private String email;
 
     @NotBlank
-    @Min(8)
-    @Max(20)
+    @Size(min = 8, max = 20)
     private String password;
 }

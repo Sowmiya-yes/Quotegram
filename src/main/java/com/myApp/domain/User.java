@@ -11,6 +11,7 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.sql.Timestamp;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -19,7 +20,7 @@ import java.util.Set;
 @AllArgsConstructor
 @Builder
 @ToString
-//@Document(collection = "User")
+@Document(collection = "User")
 public class User {
 
     public User(User user) {
@@ -29,8 +30,8 @@ public class User {
         this.userLastName = user.userLastName;
         this.email = user.email;
         this.password = user.password;
-//        this.createdTS = user.createdTS;
-//        this.updatedTS = user.updatedTS;
+        this.createdTS = user.createdTS;
+        this.updatedTS = user.updatedTS;
         this.isActive = user.isActive;
         this.roles = user.roles;
     }
@@ -40,7 +41,6 @@ public class User {
     private String userId;
 
     @NotBlank
-    @Size(max = 20)
     @Field("userName")
     private String username;
 
@@ -56,14 +56,13 @@ public class User {
     private String email;
 
     @NotBlank
-    @Size(max = 16)
     private String password;
 
     @CreatedDate
-    private Timestamp createdTS;
+    private Date createdTS;
 
     @LastModifiedDate
-    private Timestamp updatedTS;
+    private Date updatedTS;
 
     private boolean isActive;
 

@@ -12,6 +12,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.sql.Timestamp;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -20,7 +21,7 @@ import java.util.Set;
 @AllArgsConstructor
 @Builder
 @ToString
-//@Document(collection = "Post")
+@Document(collection = "Post")
 public class Post {
     @Id
     @Setter(AccessLevel.PRIVATE)
@@ -38,8 +39,8 @@ public class Post {
     private int likesCount;
 
     @CreatedDate
-    private Timestamp createdTS;
+    private Date createdTS;
 
     @LastModifiedDate
-    private Timestamp updatedTS;
+    private Date updatedTS;
 }
