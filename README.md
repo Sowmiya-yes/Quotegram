@@ -33,3 +33,10 @@ The following are the features provided by Quotegram:
    So that, when a follower access his/her quotegram feed, all the recent posts made by his/her friends are visible
 Internally, the news feed of the followers gets updated in MongoDb. 
 A cron job will run every 15 minutes that will fetch the uncached updates from MongoDb and cache it in Redis Key Object store.
+
+**Work In Progress**
+1. Hosting this application in AWS cloud
+2. Creating the swagger page for all the REST endpoints.
+
+**Future Work**
+1. Create a frontend using React and render the server side data.
